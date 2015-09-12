@@ -1,8 +1,30 @@
 <resources>
     <string name="app_name">beyond</string>
     <string name="enterApp">Enter</string>
+    <string name="newHead">Post an Ad</string>
+    <string name="title">Title</string>
+    <string name="des">Description</string>
+
+    <string name="selAd">Select ad type</string>
+    <string-array name="adType">
+        <item>offer</item>
+        <item>want</item>
+    </string-array>
+
+    <string name="selcat">Select category</string>
+    <string-array name="category">
+        <item>Music - Movies</item>
+        <item>Home - Office Furniture</item>
+        <item>Cars</item>
+        <item>Bikes &amp; Scooters</item>
+        <item>Clothing - Garments</item>
+    </string-array>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_add_new">addNew</string>
+    <string name="newPost">Post an Ad</string>
+    <string name="showMyAds">Show my ads</string>
+    <string name="submit">submit</string>
 </resources>

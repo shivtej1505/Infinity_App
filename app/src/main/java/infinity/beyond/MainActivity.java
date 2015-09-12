@@ -1,15 +1,19 @@
 package infinity.beyond;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -35,6 +39,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.textview);
         trending = (ListView) findViewById(R.id.trending);
+        trending.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Object tmp = adapterView.getItemAtPosition(i);
+                Log.i(TAG,tmp.toString());
+            }
+        });
         new HttpsGet().execute();
     }
 
@@ -91,8 +102,25 @@ public class MainActivity extends Activity {
                     JSONObject data = (JSONObject) treandingData.get(i);
                     Log.i(TAG, String.valueOf(data));
                     Log.i(TAG, String.valueOf(data.getJSONObject("attr")));
-                    JSONObject tmp = data.getJSONObject("attr")
-                    result.add(data.getString("cat_id") + "\n" + data.getString("count"));
+                    JSONObject tmp = data.getJSONObject("attr");
+                    String s = data.getString("cat_id");
+                    if (s.equals("56")) {
+                        result.add("Home - Office Furniture" + "\n" + tmp.getString("attribute_Furniture_Type"));
+
+                    } else if (s.equals("71")) {
+                        result.add("Cars" + "\n" + tmp.getString("attribute_Model") + tmp.getString("attribute_Brand_name"));
+                    } else if(s.equals("72")){
+                        result.add("Bikes & Scooters" + "\n" + tmp.getString("attribute_Model") + tmp.getString("attribute_Brand_name"));
+                    } else if(s.equals("51")){
+                        result.add("TV - DVD - Multimedia" + "\n" + tmp.getString("attribute_Product_Type") + tmp.getString("attribute_Brand_name"));
+                    } else if(s.equals("112")){
+                        result.add("" + "\n" + data.getString("count"));
+                    } else if(s.equals("148")){
+                        result.add("Cameras - Digicams" + "\n" + data.getString("count"));
+                    } else if(s.equals("149")){
+                        result.add("Mobile Phones" + "\n" + data.getString("count"));
+                    }
+
                 }
             } catch (Exception e){
                 e.printStackTrace();
@@ -118,6 +146,13 @@ public class MainActivity extends Activity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.newPost) {
+            Toast.makeText(MainActivity.this,"New post",Toast.LENGTH_SHORT).show();
+            Intent jmp = new Intent(MainActivity.this,addNew.class);
+            startActivity(jmp);
+
+        } else if(id == R.id.showMyAds){
+            Toast.makeText(MainActivity.this,"New post",Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
