@@ -4,34 +4,47 @@ import android.app.Activity;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
-    import org.apache.http.client.ResponseHandler;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends Activity {
 
+    private final String TAG = "Infinity";
     TextView textView;
+    ListView trending;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.textview);
+        trending = (ListView) findViewById(R.id.trending);
         new HttpsGet().execute();
     }
 
-    private class HttpsGet extends AsyncTask<Void,Void,String>{
+    private class HttpsGet extends AsyncTask<Void,Void,List<String>>{
 
         private static final String URL = "https://api.quikr.com/public/trending";
         AndroidHttpClient client = AndroidHttpClient.newInstance("beyond");
 
         @Override
-        protected String doInBackground(Void... voids) {
+        protected List<String> doInBackground(Void... voids) {
             HttpGet get = new HttpGet(URL);
             get.setHeader("X-Quikr-App-Id","520");
             get.setHeader("X-Quikr-Token-Id","2865896");
@@ -39,18 +52,52 @@ public class MainActivity extends Activity {
             get.setHeader("Content-Type","application/json");
 
             try {
-                ResponseHandler<String> responseHandler = new BasicResponseHandler();
-                return client.execute(get,responseHandler);
+                JSONHandler responseHandler = new JSONHandler();
+                List<String> l =  client.execute(get, responseHandler);
+                return l;
             } catch (IOException e) {
                 e.printStackTrace();
-                return "Error";
+                return null;
             }
         }
 
+
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            textView.setText(s);
+        protected void onPostExecute(List<String> result) {
+            if(result != null) {
+                Log.i(TAG, String.valueOf(result));
+                trending.setAdapter(new ArrayAdapter<String>(MainActivity.this,R.layout.listitem,result));
+            }
+        }
+    }
+
+    private class JSONHandler implements ResponseHandler<List<String>>{
+
+        private static final String TRENDING = "getTrendingResponse";
+        private static final String LOL = "trendingData";
+        @Override
+        public List<String> handleResponse(HttpResponse httpResponse)
+                throws ClientProtocolException, IOException {
+                List<String> result = new ArrayList<String>();
+                String JSONResponse = new BasicResponseHandler().handleResponse(httpResponse);
+            try {
+                JSONObject jsonObject = (JSONObject) new JSONTokener(JSONResponse).nextValue();
+                JSONObject object = jsonObject.getJSONObject(TRENDING);
+                JSONArray treandingData = object.getJSONArray(LOL);
+
+                Log.i(TAG, String.valueOf(treandingData));
+
+                for(int i = 0; i < treandingData.length(); i++) {
+                    JSONObject data = (JSONObject) treandingData.get(i);
+                    Log.i(TAG, String.valueOf(data));
+                    Log.i(TAG, String.valueOf(data.getJSONObject("attr")));
+                    JSONObject tmp = data.getJSONObject("attr")
+                    result.add(data.getString("cat_id") + "\n" + data.getString("count"));
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+            return result;
         }
     }
 
