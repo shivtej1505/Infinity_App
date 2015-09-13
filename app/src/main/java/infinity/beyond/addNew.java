@@ -90,13 +90,13 @@ public class addNew extends Activity {
                 tmp = "{ \n" +
                         "\"email\": \"shiv@nag.com\",\n" +
                         "\"remoteAddr\": \"192.168.51.57\",\n" +
-                        "\"subCategory\": \"cars\",\n" +
+                        "\"subCategory\": \"" + cate + "\",\n" +
                         "\"cityName\": \"Hyderabad\",\n" +
                         "\"title\": \"" + itemTitle.getText().toString() + "\",\n" +
                         "\"description\": \"" + itemDes.getText().toString() +"\",\n" +
                         "\"locations\": \"Gachibowli\",\n" +
                         "\"attributes\":\n" +
-                        "{ \"Ad_Type\": \"offer\", \"You_are\": \"Dealer\", \"Kms_Driven\": \"272\", \"Condition\": \"Used\", \"Year\": \"2015\", \"Brand_name\": \"Honda\", \"Model\": \"City\" }\n" +
+                        "{ \"Ad_Type\": \"" + type + "\", \"You_are\": \"Dealer\", \"Kms_Driven\": \"272\", \"Condition\": \"Used\", \"Year\": \"2015\", \"Brand_name\": \"Honda\", \"Model\": \"City\" }\n" +
                         "}";
 
                 new itemPost().execute();
