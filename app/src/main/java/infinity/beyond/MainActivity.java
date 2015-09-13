@@ -2,6 +2,7 @@ package infinity.beyond;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,41 +32,49 @@ import java.util.List;
 public class MainActivity extends Activity {
 
     private final String TAG = "Infinity";
-    TextView textView;
     ListView trending;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = (TextView) findViewById(R.id.textview);
+
         trending = (ListView) findViewById(R.id.trending);
         trending.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
                 Object tmp = adapterView.getItemAtPosition(i);
+                startActivity(new Intent(MainActivity.this,showItem.class));
                 Log.i(TAG,tmp.toString());
             }
         });
+
         new HttpsGet().execute();
     }
 
-    private class HttpsGet extends AsyncTask<Void,Void,List<String>>{
+    private class HttpsGet extends AsyncTask<Void,Void,myAdapter>{
 
         private static final String URL = "https://api.quikr.com/public/trending";
         AndroidHttpClient client = AndroidHttpClient.newInstance("beyond");
 
         @Override
-        protected List<String> doInBackground(Void... voids) {
+        protected myAdapter doInBackground(Void... voids) {
+
+            SharedPreferences preferences = getSharedPreferences("beyond",MODE_PRIVATE);
+
             HttpGet get = new HttpGet(URL);
-            get.setHeader("X-Quikr-App-Id","520");
-            get.setHeader("X-Quikr-Token-Id","2865896");
-            get.setHeader("X-Quikr-Signature","a8e02a923ef6aa3d3ae8d37975638ca7ed45fc63");
+
+            get.setHeader("X-Quikr-App-Id",preferences.getString(shortcut.tokens.APP_ID,"520"));
+            get.setHeader("X-Quikr-Token-Id",preferences.getString(shortcut.tokens.TOKEN_ID,"3088686"));
+            get.setHeader("X-Quikr-Signature",preferences.getString(shortcut.tokens.TRENDING,"4db0cf0c1edfa3cc2694b16576b0019013007348"));
+
             get.setHeader("Content-Type","application/json");
 
             try {
                 JSONHandler responseHandler = new JSONHandler();
-                List<String> l =  client.execute(get, responseHandler);
-                return l;
+                myAdapter adaptr = client.execute(get, responseHandler);
+                client.close();
+                return adaptr;
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
@@ -74,23 +83,30 @@ public class MainActivity extends Activity {
 
 
         @Override
-        protected void onPostExecute(List<String> result) {
+        protected void onPostExecute(myAdapter result) {
             if(result != null) {
                 Log.i(TAG, String.valueOf(result));
-                trending.setAdapter(new ArrayAdapter<String>(MainActivity.this,R.layout.listitem,result));
+                //trending.setAdapter(new ArrayAdapter<String>(MainActivity.this,R.layout.listitem,result));
+                trending.setAdapter(result);
             }
         }
     }
 
-    private class JSONHandler implements ResponseHandler<List<String>>{
+    private class JSONHandler implements ResponseHandler<myAdapter>{
 
         private static final String TRENDING = "getTrendingResponse";
         private static final String LOL = "trendingData";
         @Override
-        public List<String> handleResponse(HttpResponse httpResponse)
+        public myAdapter handleResponse(HttpResponse httpResponse)
                 throws ClientProtocolException, IOException {
-                List<String> result = new ArrayList<String>();
-                String JSONResponse = new BasicResponseHandler().handleResponse(httpResponse);
+
+            myAdapter adapter = new myAdapter(MainActivity.this);
+            adapter.clear();
+            ItemData itemData;
+
+            List<String> result = new ArrayList<String>();
+            String JSONResponse = new BasicResponseHandler().handleResponse(httpResponse);
+
             try {
                 JSONObject jsonObject = (JSONObject) new JSONTokener(JSONResponse).nextValue();
                 JSONObject object = jsonObject.getJSONObject(TRENDING);
@@ -103,29 +119,14 @@ public class MainActivity extends Activity {
                     Log.i(TAG, String.valueOf(data));
                     Log.i(TAG, String.valueOf(data.getJSONObject("attr")));
                     JSONObject tmp = data.getJSONObject("attr");
-                    String s = data.getString("cat_id");
-                    if (s.equals("56")) {
-                        result.add("Home - Office Furniture" + "\n" + tmp.getString("attribute_Furniture_Type"));
 
-                    } else if (s.equals("71")) {
-                        result.add("Cars" + "\n" + tmp.getString("attribute_Model") + tmp.getString("attribute_Brand_name"));
-                    } else if(s.equals("72")){
-                        result.add("Bikes & Scooters" + "\n" + tmp.getString("attribute_Model") + tmp.getString("attribute_Brand_name"));
-                    } else if(s.equals("51")){
-                        result.add("TV - DVD - Multimedia" + "\n" + tmp.getString("attribute_Product_Type") + tmp.getString("attribute_Brand_name"));
-                    } else if(s.equals("112")){
-                        result.add("" + "\n" + data.getString("count"));
-                    } else if(s.equals("148")){
-                        result.add("Cameras - Digicams" + "\n" + data.getString("count"));
-                    } else if(s.equals("149")){
-                        result.add("Mobile Phones" + "\n" + data.getString("count"));
-                    }
-
+                    itemData = new ItemData(data.getInt("cat_id"),data.getInt("count"),tmp);
+                    adapter.add(itemData);
                 }
             } catch (Exception e){
                 e.printStackTrace();
             }
-            return result;
+            return adapter;
         }
     }
 

@@ -2,6 +2,8 @@ package infinity.beyond;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,10 +23,14 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
@@ -35,14 +41,16 @@ import java.io.UnsupportedEncodingException;
 
 public class addNew extends Activity {
 
-    String cate,type;
+    String cate,type,tmp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new);
+
         Button submit = (Button) findViewById(R.id.submit);
-        EditText itemTitle = (EditText) findViewById(R.id.title);
-        EditText itemDes = (EditText) findViewById(R.id.description);
+        final EditText itemTitle = (EditText) findViewById(R.id.title);
+        final EditText itemDes = (EditText) findViewById(R.id.description);
         Spinner category = (Spinner) findViewById(R.id.category);
         Spinner adType = (Spinner) findViewById(R.id.ad_type);
 
@@ -76,69 +84,67 @@ public class addNew extends Activity {
             }
         });
 
-        JSONObject attr = new JSONObject();
-        try {
-            attr.put("Ad_Type","offer");
-            attr.put("You_are", "Dealer");
-            attr.put("Kms_Driven", "10");
-            attr.put("Condition", "Used");
-            attr.put("Year", "2015");
-            attr.put("Brand_name", "Honda");
-            attr.put("Model", "City");
-            Log.i("Response",attr.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        final JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("email", "shivang@nagaria.com");
-            jsonObject.put("remoteAddr", "14.139.82.6");
-            jsonObject.put("subCategory", "cars");
-            jsonObject.put("cityName", "Hyderabad");
-            jsonObject.put("title", "Hi this is a dummy title  a dummy car for hackathon");
-            jsonObject.put("description", "This is a dummy description of atleast 30 characters.");
-            jsonObject.put("locations", "Gachibowli");
-            jsonObject.put("attributes", attr);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("Response",jsonObject.toString());
-                new itemPost().execute(jsonObject);
+                tmp = "{ \n" +
+                        "\"email\": \"shiv@nag.com\",\n" +
+                        "\"remoteAddr\": \"192.168.51.57\",\n" +
+                        "\"subCategory\": \"cars\",\n" +
+                        "\"cityName\": \"Hyderabad\",\n" +
+                        "\"title\": \"" + itemTitle.getText().toString() + "\",\n" +
+                        "\"description\": \"" + itemDes.getText().toString() +"\",\n" +
+                        "\"locations\": \"Gachibowli\",\n" +
+                        "\"attributes\":\n" +
+                        "{ \"Ad_Type\": \"offer\", \"You_are\": \"Dealer\", \"Kms_Driven\": \"272\", \"Condition\": \"Used\", \"Year\": \"2015\", \"Brand_name\": \"Honda\", \"Model\": \"City\" }\n" +
+                        "}";
+
+                new itemPost().execute();
             }
         });
     }
 
-    private class itemPost  extends AsyncTask<JSONObject,Void,String> {
+    private class itemPost  extends AsyncTask<Void,Void,String> {
 
-        AndroidHttpClient client = AndroidHttpClient.newInstance("");
+        SharedPreferences preferences = getSharedPreferences("beyond", MODE_PRIVATE);
+        //AndroidHttpClient client = AndroidHttpClient.newInstance("");
+
         private static final String URL = "https://api.quikr.com/public/postAds";
+
         //DefaultHttpClient client = new DefaultHttpClient();
         @Override
-        protected String  doInBackground(JSONObject... jsonObjects) {
+        protected String  doInBackground(Void... voids) {
             HttpPost post = new HttpPost(URL);
 
-            StringEntity stringEntity = null;
+            post.setHeader("X-Quikr-App-Id", preferences.getString(shortcut.tokens.APP_ID, "520"));
+            post.setHeader("X-Quikr-Token-Id", preferences.getString(shortcut.tokens.TOKEN_ID, "3088686"));
+            post.setHeader("X-Quikr-Signature", preferences.getString(shortcut.tokens.POSTAD, "7fb12f6936ded6d304c534cfe27b510edaa5a696"));
+
+            post.addHeader("Content-Type", "application/json");
+
+
+            Log.i(shortcut.TAG,tmp);
+            int TIMEOUT_MILLISEC = 10000;  // = 10 seconds
+            HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_MILLISEC);
+            HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MILLISEC);
+            HttpClient client = new DefaultHttpClient(httpParams);
+
             try {
-                stringEntity = new StringEntity(jsonObjects.toString());
+                post.setEntity(new ByteArrayEntity(
+                        tmp.getBytes("UTF8")));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
 
-            post.setEntity(stringEntity);
-            post.setHeader("X-Quikr-App-Id", "520");
-            post.setHeader("X-Quikr-Token-Id", "2865896");
-            post.setHeader("X-Quikr-Signature", "e6290e090774ee95a2a09db74c7e8c44a954d0d8");
-            post.setHeader(HTTP.CONTENT_TYPE, "application/json");
-
             try {
                 HttpResponse httpResponse = client.execute(post);
+
                 HttpEntity entity = httpResponse.getEntity();
                 Log.i("Response", EntityUtils.toString(entity));
                 Log.i("Response",httpResponse.getStatusLine().getStatusCode()+"");
-                return httpResponse.toString();
+                return httpResponse.getStatusLine().toString();
+
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;

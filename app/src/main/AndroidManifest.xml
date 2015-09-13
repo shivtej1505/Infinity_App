@@ -21,11 +21,15 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main" >
+            android:label="@string/popu" >
         </activity>
         <activity
             android:name=".addNew"
             android:label="@string/title_activity_add_new" >
+        </activity>
+        <activity
+            android:name=".showItem"
+            android:label="@string/title_activity_show_item" >
         </activity>
     </application>
 

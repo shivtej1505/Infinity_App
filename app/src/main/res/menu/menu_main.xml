@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context="infinity.beyond.MainActivity">
     <item
         android:id="@+id/newPost"
+        android:icon="@drawable/ic_action_new"
         android:title="@string/newPost"
         android:showAsAction="ifRoom"/>
     <item

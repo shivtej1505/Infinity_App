@@ -2,6 +2,7 @@ package infinity.beyond;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,10 +11,18 @@ import android.widget.Button;
 
 public class enterToApp extends Activity {
 
+    SharedPreferences.Editor editor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_enter_to_app);
+
+        editor = getSharedPreferences("beyond",MODE_PRIVATE).edit();
+        editor.putString(shortcut.tokens.APP_ID,"520");
+        editor.putString(shortcut.tokens.TOKEN_ID,"3088686");
+        editor.putString(shortcut.tokens.TRENDING,"4db0cf0c1edfa3cc2694b16576b0019013007348");
+        editor.putString(shortcut.tokens.POSTAD,"7fb12f6936ded6d304c534cfe27b510edaa5a696");
+        editor.commit();
 
         final Button entry = (Button) findViewById(R.id.enter);
         entry.setOnClickListener(new View.OnClickListener() {

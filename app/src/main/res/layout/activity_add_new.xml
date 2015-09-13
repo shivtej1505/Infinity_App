@@ -11,7 +11,7 @@
 
     <TextView
         android:text="@string/newHead"
-        android:textSize="25sp"
+        android:textSize="20sp"
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -24,7 +24,6 @@
 
     <EditText
         android:id="@+id/title"
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -36,7 +35,6 @@
 
     <EditText
         android:id="@+id/description"
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
