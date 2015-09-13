@@ -1,9 +1,14 @@
 package infinity.beyond;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,12 +33,34 @@ public class enterToApp extends Activity {
         entry.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                new loginUser().execute();
                 Intent jmp = new Intent(enterToApp.this,MainActivity.class);
                 startActivity(jmp);
             }
         });
     }
 
+    private class loginUser extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            SQLiteDatabase db = new dbHelper(enterToApp.this).getWritableDatabase();
+            new dbHelper(enterToApp.this).onCreate(db);
+
+            ContentValues values = new ContentValues();
+            values.put(dbHelper.COLUMN_ID,272);
+            values.put(dbHelper.COLUMN_TYPE,"offer");
+            values.put(dbHelper.COLUMN_TITLE,"There is no title");
+            values.put(dbHelper.COLUMN_DES,"There is no description");
+            values.put(dbHelper.COLUMN_DATE, "1995-05-15");
+
+            long success = db.insert(dbHelper.TABLE_NAME,null,values);
+            Log.i(shortcut.TAG,""+success);
+            values.clear();
+            db.close();
+            return null;
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

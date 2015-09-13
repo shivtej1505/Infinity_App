@@ -19,24 +19,27 @@ public class ItemData {
         this.itemId = dataId;
         this.itemCount = itemCount;
         this.json = attr;
-
-        if(itemId == 56) {
-            setItemType("Home - Office Furniture");
-            setItemTitle(json.getString("attribute_Furniture_Type"));
-            setItemDes("No description");
-        } else if(itemId == 71) {
-            setItemType("Cars");
-            setItemTitle(json.getString("attribute_Brand_name"));
-            setItemDes(json.getString("attribute_Model"));
-        } else if(itemId == 72) {
-            setItemType("Bikes & Scooters");
-            setItemTitle(json.getString("attribute_Brand_name"));
-            setItemDes(json.getString("attribute_Model"));
-        } else if(itemId == 149) {
-            setItemType("Mobile Phones");
-            setItemTitle(json.getString("attribute_Brand_name"));
-            setItemDes(json.getString("attribute_Model"));
+        if(attr != null) {
+            if (itemId == 56) {
+                setItemType("Home - Office Furniture");
+                setItemTitle(json.getString("attribute_Furniture_Type"));
+                setItemDes("No description");
+            } else if (itemId == 71) {
+                setItemType("Cars");
+                setItemTitle(json.getString("attribute_Brand_name"));
+                setItemDes(json.getString("attribute_Model"));
+            } else if (itemId == 72) {
+                setItemType("Bikes & Scooters");
+                setItemTitle(json.getString("attribute_Brand_name"));
+                setItemDes(json.getString("attribute_Model"));
+            } else if (itemId == 149) {
+                setItemType("Mobile Phones");
+                setItemTitle(json.getString("attribute_Brand_name"));
+                setItemDes(json.getString("attribute_Model"));
+            }
         }
+
+
     }
 
     public Integer getItemId() {

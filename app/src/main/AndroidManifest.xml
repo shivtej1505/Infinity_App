@@ -31,6 +31,10 @@
             android:name=".showItem"
             android:label="@string/title_activity_show_item" >
         </activity>
+        <activity
+            android:name=".showMyAds"
+            android:label="@string/title_activity_show_my_ads" >
+        </activity>
     </application>
 
 </manifest>

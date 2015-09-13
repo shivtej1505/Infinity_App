@@ -153,7 +153,8 @@ public class MainActivity extends Activity {
             startActivity(jmp);
 
         } else if(id == R.id.showMyAds){
-            Toast.makeText(MainActivity.this,"New post",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this,"New post",Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this,showMyAds.class));
         }
 
         return super.onOptionsItemSelected(item);

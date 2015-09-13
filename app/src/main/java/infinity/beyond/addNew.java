@@ -107,7 +107,6 @@ public class addNew extends Activity {
     private class itemPost  extends AsyncTask<Void,Void,String> {
 
         SharedPreferences preferences = getSharedPreferences("beyond", MODE_PRIVATE);
-        //AndroidHttpClient client = AndroidHttpClient.newInstance("");
 
         private static final String URL = "https://api.quikr.com/public/postAds";
 
