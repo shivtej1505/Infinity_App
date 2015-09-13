@@ -39,11 +39,6 @@ public class showMyAds extends Activity {
         @Override
         protected dbAdapter doInBackground(Void... params) {
 
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             dbAdapter adapter = new dbAdapter(showMyAds.this);
             dbHelper myHelper = new dbHelper(showMyAds.this);
             SQLiteDatabase db = myHelper.getReadableDatabase();

@@ -1,10 +1,13 @@
 <resources>
-    <string name="app_name">beyond</string>
+    <string name="app_name">Reach</string>
     <string name="enterApp">Enter</string>
     <string name="newHead">Post an Ad</string>
     <string name="title">Title</string>
     <string name="des">Description</string>
     <string name="popu">Popular on beyond</string>
+
+    <string name="ansQues">Answer the question</string>
+    <string name="putHint">What is your answer?</string>
 
     <string name="selAd">Select ad type</string>
     <string-array name="adType">
@@ -23,6 +26,36 @@
 
     <string name="sample">Sample</string>
     <string name="rent">Rent</string>
+    <string name="app_tag">Rent all</string>
+    <string name="action_credit">Credits</string>
+    <string name="action_bugs">Bugs</string>
+    <string name="enterPass">Enter your password</string>
+    <string name="forgetPass">Forget password</string>
+    <string name="next">Next</string>
+    <string name="back">Back</string>
+    <string name="done">Done</string>
+
+
+
+    <string name="passHint">Enter your password</string>
+    <string name="passAgainHint">Confirm password</string>
+    <string name="chooseHintQ">Pick an question</string>
+    <string name="fillUpHintA">Fill up answer</string>
+    <string name="savingData">Saving data…</string>
+    <string name="ans">Answer</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+
+    <string-array name="hintQ">
+        <item>What is your favorite color?</item>
+        <item>What is your favorite food?</item>
+        <item>What is your mother\'s maiden name?</item>
+        <item>Who is your favorite teacher?</item>
+        <item>What is your favorite game?</item>
+    </string-array>
+
+
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -33,4 +66,5 @@
     <string name="submit">submit</string>
     <string name="title_activity_show_item">showItem</string>
     <string name="title_activity_show_my_ads">showMyAds</string>
+    <string name="title_activity_login">login</string>
 </resources>
