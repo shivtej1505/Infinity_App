@@ -4,7 +4,7 @@
 
 ### Description:
 
-An android app that has feature of the [quikr](www.quikr.com) website. The app uses the api provided by the quikr. 
+An android app that has feature of the [quikr](http://www.quikr.com) website. The app uses the api provided by the quikr. 
 
 Youtube video link: 
 
